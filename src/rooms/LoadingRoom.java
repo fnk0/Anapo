@@ -25,14 +25,19 @@ public class LoadingRoom extends Room {
 	private static final Logger log = Logger.getLogger(LoadingRoom.class.getName());
 	
 	private final int ID = 0;
+	private final String NAME = "LoadingRoom";
 	
 	private final String description = "";
 	
-	
+
 	public LoadingRoom() {
 		initLogger();
 		
 		loadSaveSelectionCommands();
+	}
+	
+	public String getName() {
+		return NAME;
 	}
 	
 	public int getID() {
@@ -114,6 +119,10 @@ public class LoadingRoom extends Room {
 					return name.endsWith(".ana");
 			}
 		});
+		
+		if (matches == null) {
+			matches = new File[0];
+		}
 		
 		return matches;
 		

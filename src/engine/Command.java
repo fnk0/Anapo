@@ -33,13 +33,17 @@ public class Command {
 	}
 	
 	public boolean matches(String str) {
-		Iterator<String> i = aliases.iterator();
 		
-		while(i.hasNext()) {
-			if (str.equals(i.next())) {
-				return true;
+		if (str != null) {
+			Iterator<String> i = aliases.iterator();
+		
+			while(i.hasNext()) {
+				if (str.equals(i.next())) {
+					return true;
+				}
 			}
 		}
+		
 		
 		return false;
 	}

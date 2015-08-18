@@ -29,9 +29,11 @@ public class CommandCenter {
 	}
 	
 	public static boolean execute(String comName, String[] args) {
-		for (int i = 0; i < commands.size(); i++) {
-			if (commands.get(i).matches(comName)) {
-				commands.get(i).execute(args);
+		Iterator<String> i = commands.keySet().iterator();
+		while(i.hasNext()) {
+			String key = i.next();
+			if (commands.get(key).matches(comName)) {
+				commands.get(key).execute(args);
 				return true;
 			}
 		}

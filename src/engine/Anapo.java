@@ -30,7 +30,7 @@ public class Anapo {
 		
 		LoadingRoom lr = new LoadingRoom();
 		RoomManager.add(lr);
-		RoomManager.setCurrRoom(lr);
+		RoomManager.setCurrRoom(lr.getID());
 		
 		final double MAX_FRAME_TIME = 1000/30;
 		
@@ -79,6 +79,11 @@ public class Anapo {
 		log.setUseParentHandlers(false);
 		
 		 try {  
+			 
+			File logFolder = new File("logs");
+			if (!logFolder.exists()) {
+				logFolder.mkdir();
+			}
 
 	        // This block configure the logger with handler and formatter
 			 String date = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(new Date());
