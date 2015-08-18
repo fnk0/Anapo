@@ -1,16 +1,15 @@
 package engine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class CommandCenter {
-	HashMap<String, Command> commands;
+	static HashMap<String, Command> commands = new HashMap<>();
+	static HashMap<String, Object> sources = new HashMap<>();
 	
-	public CommandCenter() {
-		commands = new HashMap<>();
-	}
-	
-	public boolean parseCommand(String input) {
+	public static boolean parseCommand(String input) {
 		if (!input.isEmpty()) {
 			
 			String[] exploded = input.split(" ");
@@ -29,7 +28,7 @@ public class CommandCenter {
 		return false;
 	}
 	
-	public boolean execute(String comName, String[] args) {
+	public static boolean execute(String comName, String[] args) {
 		for (int i = 0; i < commands.size(); i++) {
 			if (commands.get(i).matches(comName)) {
 				commands.get(i).execute(args);
@@ -39,19 +38,43 @@ public class CommandCenter {
 		return false;
 	}
 	
-	public void register(Command com) {
+	public static void register(Object source, Command com) {
 		commands.put(com.getName(), com);
+		sources.put(com.getName(), source);
 	}
 	
-	public void unregister(Command com) {
+	public static void unregister(Command com) {
 		commands.remove(com.getName());
+		sources.remove(com.getName());
 	}
 	
-	public void unregister(String name) {
+	public static void unregister(String name) {
 		commands.remove(name);
+		sources.remove(name);
 	}
 	
-	public void clear() {
+	public static void removeAllFrom(Object source) {
+		
+		Iterator<String> i = sources.keySet().iterator();
+		ArrayList<String> toRemove = new ArrayList<>(); 
+		
+		//find entries with particular source
+		while(i.hasNext()) {
+			String name = i.next();
+			if (source == sources.get(name)) {
+				toRemove.add(name);
+			}
+		}
+		
+		//remove those entries
+		for (int n = 0; n < toRemove.size(); n++) {
+			sources.remove(toRemove.get(n));
+			commands.remove(toRemove.get(n));
+		}
+	}
+	
+	
+	public static void clear() {
 		commands = null;
 		commands = new HashMap<>();
 	}
