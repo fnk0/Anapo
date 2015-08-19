@@ -26,7 +26,9 @@ import java.util.logging.Level;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -38,6 +40,7 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 {
 	private JFrame frame;
 	private JTextArea textArea;
+	private JPopupMenu textAreaContext;
 	private JTextField textField;
 	private JButton submitButton;
 	private Thread reader;
@@ -52,7 +55,7 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 	public Console() {
 		// create all components and add them
 		
-		frame = new JFrame("Java Console");
+		frame = new JFrame("Anapo");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = new Dimension((int)(screenSize.width/2), (int)(screenSize.height/2));
 		int x = (int)(frameSize.width/2);
@@ -62,9 +65,17 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 		textArea = new JTextArea();
 		textArea.setEditable(false);
 		
+		textAreaContext = new JPopupMenu();
+		JMenuItem settingsItem = new JMenuItem("Settings");
+		settingsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openSettingsMenu();
+			}
+		});
+		textAreaContext.add(settingsItem);
+		textArea.setComponentPopupMenu(textAreaContext);
+		
 		textField = new JTextField();
-		
-		
 		
 		submitButton = new JButton("Enter");
 		
@@ -235,5 +246,9 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 		
 		return input;
 	}	
+	
+	public void openSettingsMenu() {
+		
+	}
 			
 }
