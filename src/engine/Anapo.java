@@ -14,6 +14,7 @@ import java.util.logging.SimpleFormatter;
 import rooms.LoadingRoom;
 import rooms.Room;
 import rooms.RoomManager;
+import console.Console;
 
 public class Anapo {
 	
@@ -25,6 +26,8 @@ public class Anapo {
 	public static void main(String[] args) {
 
 		initLogger();
+		
+		new Console();
 		 
 		printMotd();
 		
@@ -93,9 +96,9 @@ public class Anapo {
 	        fh.setFormatter(formatter);   
 
 	    } catch (SecurityException e) {  
-	       //TODO Later Error Handling
-	    } catch (IOException e) {  
-	       //TODO Later Error Handling  
+	    	Out.println("Problem initiating Logger");
+	    } catch (IOException e) {
+	    	Out.println("Problem initiating Logger"); 
 	    }
 	}
 	
