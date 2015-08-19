@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
+import java.util.logging.Level;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import engine.Anapo;
 import engine.CommandCenter;
 
 public class Console extends WindowAdapter implements WindowListener, ActionListener, Runnable
@@ -37,6 +39,7 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 	private JFrame frame;
 	private JTextArea textArea;
 	private JTextField textField;
+	private JButton submitButton;
 	private Thread reader;
 	private Thread reader2;
 	private boolean quit;
@@ -63,7 +66,7 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 		
 		
 		
-		JButton button = new JButton("Enter");
+		submitButton = new JButton("Enter");
 		
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
@@ -71,22 +74,25 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 		//Just a container for the button and the text field
 		JPanel inputPanel = new JPanel();
 		inputPanel.setLayout(new BorderLayout());
-		inputPanel.add(button, BorderLayout.EAST);
+		inputPanel.add(submitButton, BorderLayout.EAST);
 		inputPanel.add(textField);
 		frame.getContentPane().add(inputPanel, BorderLayout.SOUTH);
 		
 		frame.setVisible(true);		
 		
 		frame.addWindowListener(this);		
-		button.addActionListener(this);
+		submitButton.addActionListener(this);
+		textField.addActionListener(this);
 		
 		try {
 			PipedOutputStream pout = new PipedOutputStream(this.pin);
 			System.setOut(new PrintStream(pout,true)); 
 		} catch (java.io.IOException io) {
 			textArea.append("Couldn't redirect STDOUT to this console\n"+io.getMessage());
+			Anapo.log.log(Level.SEVERE, io.toString(), io);
 		} catch (SecurityException se) {
 			textArea.append("Couldn't redirect STDOUT to this console\n"+se.getMessage());
+			Anapo.log.log(Level.SEVERE, se.toString(), se);
 	    } 
 		
 		try {
@@ -94,8 +100,10 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 			System.setErr(new PrintStream(pout2,true));
 		} catch (java.io.IOException io) {
 			textArea.append("Couldn't redirect STDERR to this console\n"+io.getMessage());
+			Anapo.log.log(Level.SEVERE, io.toString(), io);
 		} catch (SecurityException se) {
 			textArea.append("Couldn't redirect STDERR to this console\n"+se.getMessage());
+			Anapo.log.log(Level.SEVERE, se.toString(), se);
 	    } 		
 			
 		quit = false; // signals the Threads that they should exit
@@ -146,6 +154,8 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 			pin2.close(); 
 		} catch (Exception e){}
 		
+		Anapo.close();
+		
 		System.exit(0);
 	}		
 		
@@ -155,7 +165,10 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 	}
 	
 	public synchronized void actionPerformed(ActionEvent evt) {
-		
+			String command = textField.getText();
+			textField.setText("");
+//			Out.println(command);
+			CommandCenter.parseCommand(command);
 	}
 
 	public synchronized void run() {
@@ -222,9 +235,5 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 		
 		return input;
 	}	
-		
-	public static void main(String[] arg) {
-		new Console(); // create console with not reference	
-	}
 			
 }

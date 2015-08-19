@@ -18,7 +18,8 @@ import console.Console;
 
 public class Anapo {
 	
-	private static final Logger log = Logger.getLogger(Anapo.class.getName());
+	public static final Logger log = Logger.getLogger(Anapo.class.getName());
+	private static FileHandler fh;
 	
 	static final String DEFAULT_MOTD_FILE = "resources/motd";
 	
@@ -28,13 +29,35 @@ public class Anapo {
 		initLogger();
 		
 		new Console();
+		log.log(Level.INFO, "Opening Console");
+		
+		//Testing
+		//list commands
+		
+		CommandCenter.register(null, new Command("list") {
+			public boolean execute(String[] args) {
+				
+				if (args.length > 0 && args[0].equals("commands")) {
+					Out.println("");
+					CommandCenter.printCommands();
+					Out.println("");
+				} else {
+					Out.println("Usage: list commands");
+				}
+				
+				return true;
+			}
+		});
 		 
 		printMotd();
 		
+		log.info("Setting up loading room");
 		LoadingRoom lr = new LoadingRoom();
 		RoomManager.add(lr);
 		RoomManager.setCurrRoom(lr.getID());
 		
+		
+		log.info("Starting Game Loop");
 		final double MAX_FRAME_TIME = 1000/30;
 		
 		double lastTime = System.currentTimeMillis();
@@ -68,7 +91,7 @@ public class Anapo {
 		if (motd.isFile()) {
 			try (BufferedReader in = new BufferedReader(new FileReader(motd));){
 				while(in.ready()) {
-					Out.print(in.readLine());
+					Out.println(in.readLine());
 				}
 			} catch (IOException e){
 				log.log(Level.SEVERE, e.toString(), e);
@@ -90,7 +113,7 @@ public class Anapo {
 
 	        // This block configure the logger with handler and formatter
 			 String date = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(new Date());
-	        FileHandler fh = new FileHandler("logs/" + date + ".txt");  
+	        fh = new FileHandler("logs/" + date + ".txt");  
 	        log.addHandler(fh);
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter);   
@@ -100,6 +123,11 @@ public class Anapo {
 	    } catch (IOException e) {
 	    	Out.println("Problem initiating Logger"); 
 	    }
+	}
+	
+	public static void close() {
+		log.warning("closing application");
+		fh.close();
 	}
 	
 }

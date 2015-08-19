@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class CommandCenter {
+	
+	public static final String COMMAND_INCORRECT_TEXT = "Not a valid registered command";
+	
 	static HashMap<String, Command> commands = new HashMap<>();
 	static HashMap<String, Object> sources = new HashMap<>();
 	
@@ -13,12 +16,13 @@ public class CommandCenter {
 		if (!input.isEmpty()) {
 			
 			String[] exploded = input.split(" ");
-			
+//			Out.println(Arrays.toString(exploded));
 			if (exploded.length > 0) {
 				String commandName = exploded[0];
-				String[] args = null;
+				String[] args = new String[0];
 				if (exploded.length > 1) {
-					args = Arrays.copyOfRange(exploded, 1, exploded.length-1);
+					args = Arrays.copyOfRange(exploded, 1, exploded.length);
+//					Out.println(Arrays.toString(args));
 				}
 				
 				return execute(commandName, args);
@@ -37,6 +41,8 @@ public class CommandCenter {
 				return true;
 			}
 		}
+		
+		Out.println(COMMAND_INCORRECT_TEXT);
 		return false;
 	}
 	
@@ -72,6 +78,13 @@ public class CommandCenter {
 		for (int n = 0; n < toRemove.size(); n++) {
 			sources.remove(toRemove.get(n));
 			commands.remove(toRemove.get(n));
+		}
+	}
+	
+	public static void printCommands() {
+		Iterator<String> i = commands.keySet().iterator();
+		while(i.hasNext()) {
+			Out.println(i.next());
 		}
 	}
 	

@@ -2,12 +2,6 @@ package rooms;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -22,8 +16,6 @@ public class LoadingRoom extends Room {
 	
 	static String entryFileName;
 	
-	private static final Logger log = Logger.getLogger(LoadingRoom.class.getName());
-	
 	private final int ID = 0;
 	private final String NAME = "LoadingRoom";
 	
@@ -31,7 +23,6 @@ public class LoadingRoom extends Room {
 	
 
 	public LoadingRoom() {
-		initLogger();
 		
 		loadSaveSelectionCommands();
 	}
@@ -48,24 +39,6 @@ public class LoadingRoom extends Room {
 		return description;
 	}
 
-	private void initLogger() {
-		log.setUseParentHandlers(false);
-		
-		 try {  
-
-	        // This block configure the logger with handler and formatter
-			 String date = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(new Date());
-	        FileHandler fh = new FileHandler("logs/" + date + ".txt");  
-	        log.addHandler(fh);
-	        SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter);   
-
-	    } catch (SecurityException e) {  
-	       //TODO Later Error Handling
-	    } catch (IOException e) {  
-	       //TODO Later Error Handling  
-	    }
-	}
 	
 	private void loadSaveSelectionCommands() {
 		//register commands for save selection
@@ -83,7 +56,7 @@ public class LoadingRoom extends Room {
 					});
 				}
 				
-				CommandCenter.register(this, new Command("New") {
+				CommandCenter.register(this, new Command("new") {
 					@SuppressWarnings("unused")
 					public void execute(String args) {
 						entryFileName = DEFAULT_ENTRY_FILE;

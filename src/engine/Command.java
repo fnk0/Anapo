@@ -32,6 +32,14 @@ public class Command {
 		this.aliases = aliases;
 	}
 	
+	public void addAlias(String alias) {
+		aliases.add(alias);
+	}
+	
+	public void removeAlias(String alias) {
+		aliases.remove(alias);
+	}
+	
 	public boolean matches(String str) {
 		
 		if (str != null) {
@@ -48,7 +56,7 @@ public class Command {
 		return false;
 	}
 	
-	public void execute(String[] args) {}
+	public boolean execute(String[] args) {return false;}
 	
 
 }
