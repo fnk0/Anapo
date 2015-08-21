@@ -1,4 +1,4 @@
-package rooms;
+package room;
 
 import java.util.HashMap;
 
@@ -44,12 +44,12 @@ public class RoomManager {
 	}
 
 	public static void add(Room room) {
-		roomsById.put(room.getID(), room);
+		roomsById.put(room.getId(), room);
 		roomsByName.put(room.getName(), room);
 	}
 	
 	public static void remove(Room room) {
-		roomsById.remove(room.getID());
+		roomsById.remove(room.getId());
 		roomsByName.remove(room.getName());
 	}
 	

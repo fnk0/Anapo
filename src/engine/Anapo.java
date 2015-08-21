@@ -11,9 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import rooms.LoadingRoom;
-import rooms.Room;
-import rooms.RoomManager;
+import room.LoadingRoom;
+import room.Room;
+import room.RoomManager;
 import console.Console;
 import console.ConsoleEvent;
 import console.ConsoleListener;
@@ -60,10 +60,13 @@ public class Anapo {
 		 
 		printMotd();
 		
+		//Registering main commands
+		registerMainCommands();
+		
 		log.info("Setting up loading room");
 		LoadingRoom lr = new LoadingRoom();
 		RoomManager.add(lr);
-		RoomManager.setCurrRoom(lr.getID());
+		RoomManager.setCurrRoom(lr.getId());
 		
 		
 		log.info("Starting Game Loop");
@@ -137,6 +140,23 @@ public class Anapo {
 	public static void close() {
 		log.warning("closing application");
 		fh.close();
+	}
+	
+	private static void registerMainCommands() {
+//		CommandCenter.register(null, new Command("list") {
+//			public boolean execute(String[] args) {
+//				
+//				if (args.length > 0 && args[0].equals("commands")) {
+//					Out.println("");
+//					CommandCenter.printCommands();
+//					Out.println("");
+//				} else {
+//					Out.println("Usage: list commands");
+//				}
+//				
+//				return true;
+//			}
+//		});
 	}
 	
 }

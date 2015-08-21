@@ -1,4 +1,4 @@
-package rooms;
+package room;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -24,19 +24,11 @@ public class LoadingRoom extends Room {
 
 	public LoadingRoom() {
 		
+		setId(ID);
+		setName(NAME);
+		setDescription(description);
+		
 		loadSaveSelectionCommands();
-	}
-	
-	public String getName() {
-		return NAME;
-	}
-	
-	public int getID() {
-		return ID;
-	}
-
-	public String getDescription() {
-		return description;
 	}
 
 	
@@ -106,12 +98,4 @@ public class LoadingRoom extends Room {
 		return defaults.isFile();
 	}
 
-	public void update(double elapsed) {
-	}
-
-	@Override
-	public void leaving() {
-		// TODO Auto-generated method stub
-		
-	}
 }
