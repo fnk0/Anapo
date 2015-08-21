@@ -29,6 +29,8 @@ import javax.swing.tree.TreeSelectionModel;
 import net.miginfocom.swing.MigLayout;
 import say.swing.JFontChooser;
 
+import com.bric.swing.ColorPicker;
+
 @SuppressWarnings("serial")
 public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListener, ActionListener {
 	
@@ -43,14 +45,29 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 	
 	JPanel menuPanel;
 	JPanel colorMenuPanel;
+		JButton displayBGBtn;
+		JButton displayFGBtn;
+		JButton inputBGBtn;
+		JButton inputFGBtn;
 	JPanel textMenuPanel;
 		JLabel displayFontLabel;
 		JLabel inputFontLabel;
+		
 	final static String COLOR_MENU = "Color Menu";
 	final static String TEXT_MENU = "Text Menu";
 	
 	final static String DISPLAY_SELECT = "Display select";
 	final static String INPUT_SELECT = "Input select";
+	
+	final static String DISPLAY_BG = "Display BG";
+	final static String DISPLAY_FG = "Display FG";
+	final static String INPUT_BG = "Input BG";
+	final static String INPUT_FG = "INPUT FG";
+	
+	
+	final static String OKAY_OPTION = "OKAY_OPTION";
+	final static String CANCEL_OPTION = "CANCEL_OPTION";
+	
 	
 	JFrame parentFrame;
 	
@@ -61,6 +78,8 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 		
 		oldSettings = settings;
 		newSettings = new ConsoleSettings(settings);
+		
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		setPreferredSize(new Dimension(400, 300));
 		
@@ -99,7 +118,72 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 		//Menu Panel
 		menuPanel = new JPanel();
 			colorMenuPanel = new JPanel();
-				colorMenuPanel.add(new JLabel("Color menu"));
+				colorMenuPanel.setLayout(new MigLayout("wrap 2, fillx"));
+				colorMenuPanel.add(new JLabel("Color menu"), "align center, wrap, span");
+				
+				//Display BG
+				JPanel displayBGPanel = new JPanel();
+					displayBGPanel.setBorder(BorderFactory.createTitledBorder("Display BG"));
+					displayBGPanel.setLayout(new MigLayout("", "[grow]", ""));
+					displayBGBtn = new JButton(" ");
+						displayBGBtn.addActionListener(this);
+						displayBGBtn.setActionCommand(DISPLAY_BG);
+						displayBGBtn.setBorderPainted(false);
+						displayBGBtn.setFocusPainted(false);
+						displayBGBtn.setContentAreaFilled(false);
+						displayBGBtn.setBackground(oldSettings.getDisplayBG());
+						displayBGBtn.setOpaque(true);
+					displayBGPanel.add(displayBGBtn, "growx");
+				
+				colorMenuPanel.add(displayBGPanel, "growx");
+				
+				//Display FG
+				JPanel displayFGPanel = new JPanel();
+				displayFGPanel.setBorder(BorderFactory.createTitledBorder("Display FG"));
+				displayFGPanel.setLayout(new MigLayout("", "[grow]", ""));
+				displayFGBtn = new JButton(" ");
+					displayFGBtn.addActionListener(this);
+					displayFGBtn.setActionCommand(DISPLAY_FG);
+					displayFGBtn.setBorderPainted(false);
+					displayFGBtn.setFocusPainted(false);
+					displayFGBtn.setContentAreaFilled(false);
+					displayFGBtn.setBackground(oldSettings.getDisplayFG());
+					displayFGBtn.setOpaque(true);
+				displayFGPanel.add(displayFGBtn, "growx");
+			
+				colorMenuPanel.add(displayFGPanel, "growx");
+				
+				//Input FG
+				JPanel inputBGPanel = new JPanel();
+				inputBGPanel.setBorder(BorderFactory.createTitledBorder("Input BG"));
+				inputBGPanel.setLayout(new MigLayout("", "[grow]", ""));
+				inputBGBtn = new JButton(" ");
+					inputBGBtn.addActionListener(this);
+					inputBGBtn.setActionCommand(INPUT_BG);
+					inputBGBtn.setBorderPainted(false);
+					inputBGBtn.setFocusPainted(false);
+					inputBGBtn.setContentAreaFilled(false);
+					inputBGBtn.setBackground(oldSettings.getInputBG());
+					inputBGBtn.setOpaque(true);
+				inputBGPanel.add(inputBGBtn, "growx");
+			
+				colorMenuPanel.add(inputBGPanel, "growx");
+				
+				//Input FG
+				JPanel inputFGPanel = new JPanel();
+				inputFGPanel.setBorder(BorderFactory.createTitledBorder("Input FG"));
+				inputFGPanel.setLayout(new MigLayout("", "[grow]", ""));
+				inputFGBtn = new JButton(" ");
+					inputFGBtn.addActionListener(this);
+					inputFGBtn.setActionCommand(INPUT_FG);
+					inputFGBtn.setBorderPainted(false);
+					inputFGBtn.setFocusPainted(false);
+					inputFGBtn.setContentAreaFilled(false);
+					inputFGBtn.setBackground(oldSettings.getInputFG());
+					inputFGBtn.setOpaque(true);
+				inputFGPanel.add(inputFGBtn, "growx");
+			
+				colorMenuPanel.add(inputFGPanel, "growx");
 			
 			//Text Menu Card
 			textMenuPanel = new JPanel();
@@ -150,18 +234,32 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 		
 		//Button Panel
 		okayBtn = new JButton("Okay");
+			okayBtn.addActionListener(this);
+			okayBtn.setActionCommand(OKAY_OPTION);
+			
 		cancelBtn = new JButton("Cancel");
-		applyBtn = new JButton("Apply");
+			cancelBtn.addActionListener(this);
+			cancelBtn.setActionCommand(CANCEL_OPTION);
+//		applyBtn = new JButton("Apply");
 		
 		JPanel btnPanel = new JPanel();
+			btnPanel.setLayout(new MigLayout("align right"));
 			btnPanel.add(okayBtn);
 			btnPanel.add(cancelBtn);
-			btnPanel.add(applyBtn);
+//			btnPanel.add(applyBtn);
 			
 		add(btnPanel, BorderLayout.SOUTH);
 		
 		pack();
+		
+		setLocationRelativeTo(parentFrame);
 	}
+	
+	public ConsoleSettings showDialog() {
+		setVisible(true);
+		return newSettings;
+	}
+	
 	
 	private void updateMenus() {
 		Font displayFont = newSettings.getDisplayFont();
@@ -170,6 +268,11 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 		
 		Font inputFont = newSettings.getInputFont();
 		inputFontLabel.setText(inputFont.getFontName() + ", " + inputFont.getSize() + "pt.");
+		
+		displayBGBtn.setBackground(newSettings.getDisplayBG());
+		displayFGBtn.setBackground(newSettings.getDisplayFG());
+		inputBGBtn.setBackground(newSettings.getInputBG());
+		inputFGBtn.setBackground(newSettings.getInputFG());
 	}
 	
 	@Override
@@ -198,6 +301,14 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch(e.getActionCommand()) {
+			case OKAY_OPTION:
+				setVisible(false);
+				dispose();
+				break;
+			case CANCEL_OPTION:
+				setVisible(false);
+				dispose();
+				break;
 			case DISPLAY_SELECT:
 				JFontChooser jc = new JFontChooser();
 				jc.setSelectedFont(newSettings.getDisplayFont());
@@ -210,6 +321,18 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 				jc2.showDialog(parentFrame);
 				newSettings.setInputFont(jc2.getSelectedFont());
 				break;
+			case DISPLAY_BG:
+				newSettings.setDisplayBG(ColorPicker.showDialog(parentFrame, newSettings.getDisplayBG()));
+				break;
+			case DISPLAY_FG:
+				newSettings.setDisplayFG(ColorPicker.showDialog(parentFrame, newSettings.getDisplayFG()));
+				break;
+			case INPUT_BG:
+				newSettings.setInputBG(ColorPicker.showDialog(parentFrame, newSettings.getInputBG()));
+				break;
+			case INPUT_FG:
+				newSettings.setInputFG(ColorPicker.showDialog(parentFrame, newSettings.getInputFG()));
+				break;
 		}
 		
 		updateMenus();
@@ -219,16 +342,16 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 	
 	public static void main(String args[]) {
 		JFrame frame = new JFrame();
-//		JFrame frame = null;
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
 		
-		JTextArea ta = new JTextArea();
-		JTextField tf = new JTextField();
+		JTextArea textArea = new JTextArea();
+		JTextField textField = new JTextField();
 		
-		ConsoleSettingsMenu c = new ConsoleSettingsMenu(frame, new ConsoleSettings(ta.getFont(), tf.getFont()));
-		c.setVisible(true);
-		c.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		ConsoleSettings cs = new ConsoleSettings(textArea.getFont(), textField.getFont(), textArea.getBackground(), textArea.getForeground(), textField.getBackground(), textField.getForeground());
+		ConsoleSettingsMenu c = new ConsoleSettingsMenu(frame, cs);
+		c.showDialog();
 		
 		System.exit(0);
 	}

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JButton;
@@ -34,7 +36,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import engine.Anapo;
-import engine.CommandCenter;
 
 public class Console extends WindowAdapter implements WindowListener, ActionListener, Runnable
 {
@@ -49,13 +50,15 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 					
 	private final PipedInputStream pin = new PipedInputStream(); 
 	private final PipedInputStream pin2 = new PipedInputStream(); 
+	
+	List<ConsoleListener> consoleListeners = new ArrayList<>();
 
 	Thread errorThrower; // just for testing (Throws an Exception at this Console
 	
-	public Console() {
+	public Console(String title) {
 		// create all components and add them
 		
-		frame = new JFrame("Anapo");
+		frame = new JFrame(title);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = new Dimension((int)(screenSize.width/2), (int)(screenSize.height/2));
 		int x = (int)(frameSize.width/2);
@@ -176,10 +179,11 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 	}
 	
 	public synchronized void actionPerformed(ActionEvent evt) {
-			String command = textField.getText();
+			String input = textField.getText();
 			textField.setText("");
-//			Out.println(command);
-			CommandCenter.parseCommand(command);
+			for (int i = 0; i < consoleListeners.size(); i++) {
+				consoleListeners.get(i).inputRecieved(new ConsoleEvent(input));
+			}
 	}
 
 	public synchronized void run() {
@@ -245,10 +249,32 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 		} while ( !input.endsWith("\n") &&  !input.endsWith("\r\n") && !quit);
 		
 		return input;
-	}	
+	}
+	
+	public void addConsoleListener(ConsoleListener cl) {
+		if (cl != null) {
+			consoleListeners.add(cl);
+		}
+		
+	}
+	
+	public void removeConsoleListener(ConsoleListener cl) {
+		if (cl != null) {
+			consoleListeners.remove(cl);
+		}
+		
+	}
 	
 	public void openSettingsMenu() {
-		
+		ConsoleSettings cs = new ConsoleSettings(textArea.getFont(), textField.getFont(), textArea.getBackground(), textArea.getForeground(), textField.getBackground(), textField.getForeground());
+		ConsoleSettingsMenu c = new ConsoleSettingsMenu(frame, cs);
+		ConsoleSettings returned = c.showDialog();
+		textArea.setFont(returned.getDisplayFont());
+		textField.setFont(returned.getInputFont());
+		textArea.setBackground(returned.getDisplayBG());
+		textArea.setForeground(returned.getDisplayFG());
+		textField.setBackground(returned.getInputBG());
+		textField.setForeground(returned.getInputFG());
 	}
 			
 }

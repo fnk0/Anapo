@@ -15,6 +15,8 @@ import rooms.LoadingRoom;
 import rooms.Room;
 import rooms.RoomManager;
 import console.Console;
+import console.ConsoleEvent;
+import console.ConsoleListener;
 
 public class Anapo {
 	
@@ -28,7 +30,14 @@ public class Anapo {
 
 		initLogger();
 		
-		new Console();
+		Console console = new Console("Anapo");
+		console.addConsoleListener(new ConsoleListener() {
+			public void inputRecieved(ConsoleEvent e) {
+				CommandCenter.parseCommand(e.getMsg());
+			}
+		});
+		
+		
 		log.log(Level.INFO, "Opening Console");
 		
 		//Testing
