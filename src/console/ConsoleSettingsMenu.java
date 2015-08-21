@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -25,9 +27,10 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
+import say.swing.JFontChooser;
 
 @SuppressWarnings("serial")
-public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListener {
+public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListener, ActionListener {
 	
 	ConsoleSettings oldSettings;
 	ConsoleSettings newSettings;
@@ -41,11 +44,20 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 	JPanel menuPanel;
 	JPanel colorMenuPanel;
 	JPanel textMenuPanel;
+		JLabel displayFontLabel;
+		JLabel inputFontLabel;
 	final static String COLOR_MENU = "Color Menu";
 	final static String TEXT_MENU = "Text Menu";
 	
+	final static String DISPLAY_SELECT = "Display select";
+	final static String INPUT_SELECT = "Input select";
+	
+	JFrame parentFrame;
+	
 	public ConsoleSettingsMenu (JFrame parentFrame, ConsoleSettings settings) {
 		super(parentFrame, "Console Settings", true);
+		
+		this.parentFrame = parentFrame;
 		
 		oldSettings = settings;
 		newSettings = new ConsoleSettings(settings);
@@ -89,31 +101,43 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 			colorMenuPanel = new JPanel();
 				colorMenuPanel.add(new JLabel("Color menu"));
 			
+			//Text Menu Card
 			textMenuPanel = new JPanel();
 				textMenuPanel.setLayout(new MigLayout("wrap 1, fillx"));
 				textMenuPanel.add(new JLabel("Text menu"), "align center");
 				
+				//Display Font
 				JPanel displayFontMenu = new JPanel();
 				
 					displayFontMenu.setLayout(new MigLayout("", "[grow]", ""));
 					displayFontMenu.setBorder(BorderFactory.createTitledBorder("Display font"));
 					
 					Font displayFont = oldSettings.getDisplayFont();
-					JLabel displayFontLabel = new JLabel(displayFont.getFontName() + ", " + displayFont.getSize() + "pt.");
+					displayFontLabel = new JLabel(displayFont.getFontName() + ", " + displayFont.getSize() + "pt.");
 					
 					displayFontMenu.add(displayFontLabel, "dock west");
-					displayFontMenu.add(new JButton("Select"), "dock east");
+					
+					JButton displaySelectBtn = new JButton("Select");
+						displaySelectBtn.addActionListener(this);
+						displaySelectBtn.setActionCommand(DISPLAY_SELECT);
+					displayFontMenu.add(displaySelectBtn, "dock east");
+					
 				textMenuPanel.add(displayFontMenu, "growx");
 				
+				//Input Font
 				JPanel inputFontMenu = new JPanel();
 					inputFontMenu.setLayout(new MigLayout("", "[grow]", ""));
 					inputFontMenu.setBorder(BorderFactory.createTitledBorder("Input font"));
 					
 					Font inputFont = oldSettings.getInputFont();
-					JLabel inputFontLabel = new JLabel(inputFont.getFontName() + ", " + inputFont.getSize() + "pt.");
+					inputFontLabel = new JLabel(inputFont.getFontName() + ", " + inputFont.getSize() + "pt.");
 					
 					inputFontMenu.add(inputFontLabel, "dock west");
-					inputFontMenu.add(new JButton("Select"), "dock east");
+					
+					JButton inputSelectBtn = new JButton("Select");
+						inputSelectBtn.addActionListener(this);
+						inputSelectBtn.setActionCommand(INPUT_SELECT);
+					inputFontMenu.add(inputSelectBtn, "dock east");
 				textMenuPanel.add(inputFontMenu, "growx");
 			
 			menuPanel.setBorder(new EmptyBorder(0,0,8,7));
@@ -139,6 +163,15 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 		pack();
 	}
 	
+	private void updateMenus() {
+		Font displayFont = newSettings.getDisplayFont();
+		displayFontLabel.setText(displayFont.getFontName() + ", " + displayFont.getSize() + "pt.");
+		displayFontLabel.paintImmediately(displayFontLabel.getVisibleRect());
+		
+		Font inputFont = newSettings.getInputFont();
+		inputFontLabel.setText(inputFont.getFontName() + ", " + inputFont.getSize() + "pt.");
+	}
+	
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) menuSelector.getLastSelectedPathComponent();
@@ -162,10 +195,33 @@ public class ConsoleSettingsMenu extends JDialog implements TreeSelectionListene
 		
 	}
 	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		switch(e.getActionCommand()) {
+			case DISPLAY_SELECT:
+				JFontChooser jc = new JFontChooser();
+				jc.setSelectedFont(newSettings.getDisplayFont());
+				jc.showDialog(parentFrame);
+				newSettings.setDisplayFont(jc.getSelectedFont());
+				break;
+			case INPUT_SELECT:
+				JFontChooser jc2 = new JFontChooser();
+				jc2.setSelectedFont(newSettings.getInputFont());
+				jc2.showDialog(parentFrame);
+				newSettings.setInputFont(jc2.getSelectedFont());
+				break;
+		}
+		
+		updateMenus();
+		
+	}
+
+	
 	public static void main(String args[]) {
 		JFrame frame = new JFrame();
 //		JFrame frame = null;
 		frame.setVisible(true);
+
 		
 		JTextArea ta = new JTextArea();
 		JTextField tf = new JTextField();
