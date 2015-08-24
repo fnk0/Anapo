@@ -4,6 +4,9 @@ import item.EquipableArmor;
 import item.EquipableWeapon;
 import item.Item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Character {
 	
 	int lvl;
@@ -14,10 +17,12 @@ public class Character {
 	int hp;
 	int currHp;
 	
-	int str;
-	int def;
-	int dex;
-	int agi;
+	int str; //Controls damage output
+	int def; //Controls damage input
+	int dex; //Controls critical hit chance and accuracy
+	int agi; //Controls dodge chance
+	
+	List<StatModifier> modifiers = new ArrayList<>();
 	
 	boolean isDead;
 	
